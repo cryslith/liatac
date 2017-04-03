@@ -31,3 +31,10 @@ Ltac require H :=
     let x := fresh in
     assert H1 as x; [| specialize (H x)]
   end.
+
+Ltac erequire H :=
+  match type of H with
+  | forall _  : ?H1, _ =>
+    let x := fresh in
+    evar (x : H1); specialize (H x); subst x
+  end.
