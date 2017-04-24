@@ -70,7 +70,8 @@ Ltac require H :=
   match type of H with
   | forall _  : ?H1, _ =>
     let x := fresh in
-    assert H1 as x; [| specialize (H x)]
+    let y := x in
+    assert H1 as x; [| specialize (H x); clear y]
   end.
 
 Ltac erequire H :=
