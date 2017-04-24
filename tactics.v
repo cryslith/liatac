@@ -1,3 +1,5 @@
+(* [unmatch] searches for a match in a goal or hypothesis,
+   and performs case-analysis on the discriminee of the match *)
 Ltac unmatch :=
   match goal with
   | [ |- context[match ?x with _ => _ end] ] =>
@@ -18,11 +20,13 @@ Proof.
   intros; unmatch; reflexivity.
 Qed.
 
+(* [multiH tac] calls tac on each of the hypotheses *)
 Ltac multiH tac :=
   multimatch goal with
   | [ H : _ |- _ ] => tac H
   end.
 
+(* [allH tac] calls tac on each of the hypotheses without backtracking *)
 Ltac allH tac :=
   match goal with
   | [ H : _ |- _ ] => tac H
@@ -66,6 +70,9 @@ Proof.
   intros; do 3 rewriteH *; reflexivity.
 Qed.
 
+(* [require], when called on a hypothesis [H : P -> Q],
+   asserts that P actually holds,
+   and thus that H's type can be replaced with Q *)
 Ltac require H :=
   match type of H with
   | forall _  : ?H1, _ =>
@@ -74,6 +81,8 @@ Ltac require H :=
     assert H1 as x; [| specialize (H x); clear y]
   end.
 
+(* [erequire H], when called on a hypothesis [H : forall x, Q x],
+   specializes [H] to a new evar to be filled in later *)
 Ltac erequire H :=
   match type of H with
   | forall _  : ?H1, _ =>
